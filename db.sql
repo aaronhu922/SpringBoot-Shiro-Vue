@@ -3,10 +3,13 @@
 # Generator: MySQL-Front 5.4  (Build 4.153) - http://www.mysqlfront.de/
 
 /*!40101 SET NAMES utf8 */;
+CREATE DATABASE IF NOT EXISTS `example`;
 
 #
 # Structure for table "article"
 #
+
+USE example;
 
 DROP TABLE IF EXISTS `article`;
 CREATE TABLE `article` (
@@ -18,11 +21,64 @@ CREATE TABLE `article` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 COMMENT='发布号作者表';
 
+INSERT INTO `article` VALUES (5,'莎士比亚','2017-10-25 09:08:45','2017-10-30 17:59:41','1'),(6,'亚里士多德','2017-10-26 10:49:28','2017-11-18 09:54:15','1'),(10,'亚历山大','2017-10-26 14:57:45','2017-11-08 13:28:52','1'),(11,'李白','2017-10-26 15:23:42','2017-10-26 15:23:42','1'),(19,'文章test2','2017-11-18 13:37:07','2017-11-18 13:37:11','1');
+
+DROP TABLE IF EXISTS `vps`;
+CREATE TABLE `vps` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `vpsname` varchar(255) DEFAULT '' COMMENT 'vpsname',
+  `vpsipport` varchar(255) DEFAULT '' COMMENT 'vpsipport',
+  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `delete_status` varchar(1) DEFAULT '1' COMMENT '是否有效  1.有效  2无效',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 COMMENT='vps table';
 #
-# Data for table "article"
+# Data for table "vps"
 #
 
-INSERT INTO `article` VALUES (5,'莎士比亚','2017-10-25 09:08:45','2017-10-30 17:59:41','1'),(6,'亚里士多德','2017-10-26 10:49:28','2017-11-18 09:54:15','1'),(10,'亚历山大','2017-10-26 14:57:45','2017-11-08 13:28:52','1'),(11,'李白','2017-10-26 15:23:42','2017-10-26 15:23:42','1'),(19,'文章test2','2017-11-18 13:37:07','2017-11-18 13:37:11','1');
+DROP TABLE IF EXISTS `website`;
+CREATE TABLE `website` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `websitename` varchar(255) DEFAULT '' COMMENT 'websitename',
+  `proxyaddr` varchar(2048) DEFAULT '' COMMENT 'proxyaddr',
+  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
+  `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'update time',
+  `delete_status` varchar(1) DEFAULT '1' COMMENT 'Valid  1.yes  2no',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 COMMENT='website table';
+#
+# Data for table "website"
+#
+
+DROP TABLE IF EXISTS `pacuser`;
+CREATE TABLE `pacuser` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(255) DEFAULT '' COMMENT 'username',
+  `userphone` varchar(255) DEFAULT '' COMMENT 'userphone',
+  `wxname` varchar(255) DEFAULT '' COMMENT 'wxname',
+  `vps_id` int(11) DEFAULT NULL COMMENT 'vps id',
+  `comments` varchar(2048) DEFAULT '' COMMENT 'websitename',
+  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
+  `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'update time',
+  `delete_status` varchar(1) DEFAULT '1' COMMENT 'Valid  1.yes  2no',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 COMMENT='pacuser table';
+#
+# Data for table "pacuser"
+#
+
+CREATE TABLE `user_website` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `pacuser_id` int(11) DEFAULT NULL COMMENT 'user id',
+  `website_id` int(11) DEFAULT NULL COMMENT 'website id',
+  `expire_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `delete_status` varchar(1) DEFAULT '1' COMMENT 'Valid  1.yes  2no',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='user_website';
+
 
 #
 # Structure for table "sys_permission"

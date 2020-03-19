@@ -26,19 +26,49 @@ export default new Router({
   routes: constantRouterMap
 })
 export const asyncRouterMap = [
+  // {
+  //   path: '/system',
+  //   component: Layout,
+  //   redirect: '/system/article',
+  //   name: '功能模块',
+  //   meta: {title: '功能模块', icon: 'tree'},
+  //   children: [
+  //     {
+  //       path: 'article',
+  //       name: '文章',
+  //       component: _import('article/article'),
+  //       meta: {title: '文章', icon: 'example'},
+  //       menu: 'article'
+  //     },
+  //   ]
+  // },
   {
-    path: '/system',
+    path: '/pacuser',
     component: Layout,
-    redirect: '/system/article',
-    name: '功能模块',
-    meta: {title: '功能模块', icon: 'tree'},
+    redirect: '/pacuser/pacuser',
+    name: '加速器管理',
+    meta: {title: '加速器用户管理', icon: 'tree'},
     children: [
       {
-        path: 'article',
-        name: '文章',
-        component: _import('article/article'),
-        meta: {title: '文章', icon: 'example'},
-        menu: 'article'
+        path: '',
+        name: '加速器用户',
+        component: _import('pacuser/pacuser'),
+        meta: {title: '加速器用户', icon: 'example'},
+        menu: 'pacuser'
+      },
+      {
+        path: 'vps',
+        name: '服务器',
+        component: _import('pacuser/vps'),
+        meta: {title: '服务器', icon: 'example'},
+        menu: 'vps'
+      },
+      {
+        path: 'website',
+        name: '加速网站',
+        component: _import('pacuser/website'),
+        meta: {title: '加速网站', icon: 'example'},
+        menu: 'website'
       },
     ]
   },
@@ -50,7 +80,11 @@ export const asyncRouterMap = [
     meta: {title: '用户权限', icon: 'table'},
     children: [
       {
-        path: '', name: '用户列表', component: _import('user/user'), meta: {title: '用户列表', icon: 'user'}, menu: 'user'
+        path: '', 
+        name: '用户列表',
+        component: _import('user/user'), 
+        meta: {title: '用户列表', icon: 'user'}, 
+        menu: 'user'
       },
       {
         path: 'role',

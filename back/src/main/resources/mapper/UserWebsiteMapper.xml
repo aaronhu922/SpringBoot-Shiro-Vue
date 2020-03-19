@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heeexy.example.dao.UserWebsiteDao">
+     <insert id="addUserWebsite" parameterType="com.alibaba.fastjson.JSONObject">
+      INSERT INTO user_website
+      (pacuser_id, website_id)
+      VALUES
+      (#{pacuserId}, #{websiteId})
+    </insert>
+
+    <select id="countUserWebsite" resultType="Integer">
+      SELECT count(0)
+      FROM user_website w
+      WHERE w.delete_status = '1'
+    </select>
+
+    <select id="listUserWebsite" resultType="com.alibaba.fastjson.JSONObject">
+      SELECT
+      w.id                                      id,
+      w.pacuser_id                                pacuserId,
+      w.website_id                                 websiteId,
+      date_format(w.create_time, '%Y.%m.%d %T') createTime
+      FROM user_website w
+      WHERE w.delete_status = '1'
+      ORDER BY w.id DESC
+      LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <update id="updateUserWebsite" parameterType="com.alibaba.fastjson.JSONObject">
+      UPDATE user_website
+      SET
+      pacuser_id = #{pacuserId},
+      website_id = #{websiteId}
+      WHERE id = #{id}
+    </update>
+  </mapper>
