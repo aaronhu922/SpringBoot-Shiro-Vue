@@ -22,7 +22,7 @@ public class VpsController {
 	/**
 	 * 查询文章列表
 	 */
-//	@RequiresPermissions("vps:list")
+	@RequiresPermissions("vps:list")
 	@GetMapping("/listVps")
 	public JSONObject listVps(HttpServletRequest request) {
 		return vpsService.listVps(CommonUtil.request2Json(request));
@@ -31,7 +31,7 @@ public class VpsController {
 	/**
 	 * 新增文章
 	 */
-//	@RequiresPermissions("vps:add")
+	@RequiresPermissions("vps:add")
 	@PostMapping("/addVps")
 	public JSONObject addVps(@RequestBody JSONObject requestJson) {
 		CommonUtil.hasAllRequired(requestJson, "vpsname,vpsipport");
@@ -41,7 +41,7 @@ public class VpsController {
 	/**
 	 * 修改文章
 	 */
-//	@RequiresPermissions("vps:update")
+	@RequiresPermissions("vps:update")
 	@PostMapping("/updateVps")
 	public JSONObject updateVps(@RequestBody JSONObject requestJson) {
 		CommonUtil.hasAllRequired(requestJson, "id,vpsname,vpsipport");

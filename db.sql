@@ -68,6 +68,9 @@ CREATE TABLE `pacuser` (
 # Data for table "pacuser"
 #
 
+INSERT INTO pacuser (username, userphone, wxname, vps_id, comments) VALUES ('test1', '19911111111', 'test1', 1, 'test1');
+INSERT INTO pacuser (username, userphone, wxname, vps_id, comments) VALUES ('test2', '33333333333', 'test3', 2, 'test2');
+
 CREATE TABLE `user_website` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `pacuser_id` int(11) DEFAULT NULL COMMENT 'user id',
@@ -79,6 +82,7 @@ CREATE TABLE `user_website` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='user_website';
 
+INSERT INTO user_website (pacuser_id, website_id) VALUES (20, 20);
 
 #
 # Structure for table "sys_permission"
@@ -99,7 +103,11 @@ CREATE TABLE `sys_permission` (
 # Data for table "sys_permission"
 #
 
-INSERT INTO `sys_permission` VALUES (101,'article','文章管理','article:list','列表',1),(102,'article','文章管理','article:add','新增',2),(103,'article','文章管理','article:update','修改',2),(601,'user','用户','user:list','列表',1),(602,'user','用户','user:add','新增',2),(603,'user','用户','user:update','修改',2),(701,'role','角色权限','role:list','列表',1),(702,'role','角色权限','role:add','新增',2),(703,'role','角色权限','role:update','修改',2),(704,'role','角色权限','role:delete','删除',2);
+INSERT INTO `sys_permission` VALUES (601,'user','用户','user:list','列表',1),(602,'user','用户','user:add','新增',2),(603,'user','用户','user:update','修改',2),(701,'role','角色权限','role:list','列表',1),(702,'role','角色权限','role:add','新增',2),(703,'role','角色权限','role:update','修改',2),(704,'role','角色权限','role:delete','删除',2),
+(101,'vps','加速器管理','vps:list','列表',1),(102,'vps','加速器管理','vps:add','新增',2),(103,'vps','加速器管理','vps:update','修改',2),
+(201,'pacuser','客户管理','pacuser:list','列表',1),(202,'pacuser','客户管理','pacuser:add','新增',2),(203,'pacuser','客户管理','pacuser:update','修改',2),(204,'pacuser','客户管理','pacuser:delete','删除',2),
+(301,'website','产品网站管理','website:list','列表',1),(302,'website','产品网站管理','website:add','新增',2),(303,'website','产品网站管理','website:update','修改',2);
+
 
 #
 # Structure for table "sys_role"

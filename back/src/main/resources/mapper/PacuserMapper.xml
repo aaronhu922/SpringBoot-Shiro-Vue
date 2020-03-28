@@ -1,42 +1,127 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.heeexy.example.dao.PacuserDao">
-  <insert id="addPacuser" parameterType="com.alibaba.fastjson.JSONObject">
-    INSERT INTO pacuser
-    (username, userphone, wxname, vps_id, comments)
-    VALUES
-    (#{username}, #{userphone}, #{wxname}, #{vpsId}, #{comments})
-  </insert>
 
-  <select id="countPacuser" resultType="Integer">
-    SELECT count(0)
-    FROM pacuser w
-    WHERE w.delete_status = '1'
-  </select>
+    <resultMap id="pacuserMap" type="com.heeexy.example.util.model.One2Many">
+        <id column="pacuserId" property="pacuserId"/>
+        <result column="username" property="username"/>
+        <result column="userphone" property="userphone"/>
+        <result column="wxname" property="wxname"/>
+        <result column="vpsId" property="vpsId"/>
+        <result column="vpsname" property="vpsname"/>
+        <result column="comments" property="comments"/>
+        <result column="createTime" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="delete_status" property="deleteStatus"/>
+        <collection property="websitesNames" ofType="String">
+            <result column="websitename" property="websitename"/>
+        </collection>
+        <collection property="websitesIds" ofType="Integer">
+            <id column="websiteId" property="websiteId"/>
+        </collection>
+    </resultMap>
+    <select id="listPacuser" resultMap="pacuserMap">
+        SELECT
+        w.id pacuserId,
+        w.username username,
+        w.userphone userphone,
+        w.wxname wxname,
+        w.comments comments,
+        v.id vpsId,
+        v.vpsname vpsname,
+        ws.id websiteId,
+        ws.websitename websitename,
+        date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM pacuser w
+        LEFT JOIN vps v ON w.vps_id = v.id AND v.delete_status = '1'
+        LEFT JOIN user_website uw ON w.id = uw.pacuser_id AND uw.delete_status = '1'
+        LEFT JOIN website ws ON uw.website_id = ws.id AND ws.delete_status = '1'
+        WHERE w.delete_status = '1'
+        ORDER BY w.id DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
 
-  <select id="listpacuser" resultType="com.alibaba.fastjson.JSONObject">
-    SELECT
-    w.id                                         id,
-    w.username                                username,
-    w.userphone                              userphone,
-    w.wxname                                wxname,
-    w.vps_id                              vpsId,
-    w.comments                                comments,
-    date_format(w.create_time, '%Y.%m.%d %T') createTime
-    FROM Pacuser w
-    WHERE w.delete_status = '1'
-    ORDER BY w.id DESC
-    LIMIT #{offSet}, #{pageRow}
-  </select>
+    <insert id="addPacuser" parameterType="com.alibaba.fastjson.JSONObject" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO pacuser
+        (username, userphone, wxname, vps_id, comments)
+        VALUES
+        (#{username}, #{userphone}, #{wxname}, #{vpsId}, #{comments})
+    </insert>
 
-  <update id="updatePacuser" parameterType="com.alibaba.fastjson.JSONObject">
-    UPDATE pacuser
-    SET
-    username = #{username},
-    userphone = #{userphone},
-    wxname = #{wxname},
-    vps_id = #{vpsId},
-    comments = #{comments}
-    WHERE id = #{id}
-  </update>
+    <insert id="insertUserWebsite">
+        INSERT INTO user_website (pacuser_id, website_id)
+        VALUES
+        <foreach collection="websites" item="websiteId" index="index" separator=",">
+            (#{pacuserId}, #{websiteId})
+        </foreach>
+    </insert>
+
+    <select id="countPacuser" resultType="Integer">
+        SELECT count(0)
+        FROM pacuser w
+        WHERE w.delete_status = '1'
+    </select>
+
+    <update id="updatePacuser" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE pacuser
+        SET
+        username = #{username},
+        userphone = #{userphone},
+        wxname = #{wxname},
+        vps_id = #{vpsId},
+        comments = #{comments},
+        delete_status = #{deleteStatus}
+        WHERE id = #{id}
+    </update>
+
+    <select id="getWebsitesByUserId" resultType="int">
+        SELECT
+        uw.website_id websiteId
+        FROM user_website uw
+        WHERE uw.pacuser_id = #{pacuserId}
+    </select>
+
+    <update id="removeOldWebsites">
+        delete from user_website
+        WHERE pacuser_id = #{pacuserId}
+        AND website_id in (
+        <foreach collection="websites" item="item" index="index" separator=",">
+            #{item}
+        </foreach>
+        )
+    </update>
+
+    <delete id="deletePacuser" parameterType="Integer">
+        delete from pacuser where id = #{pacuserId}
+    </delete>
+
+    <delete id="deletePacuserWebsites" parameterType="Integer">
+        delete from user_website
+        WHERE pacuser_id = #{pacuserId}
+    </delete>
+
+    <select id="queryExistUserPhone" resultType="int">
+        select count(0)
+        from pacuser
+        WHERE userphone=#{userphone}
+    </select>
+
+    <select id="searchPacuser" resultMap="pacuserMap">
+        SELECT
+        w.id pacuserId,
+        w.username username,
+        w.userphone userphone,
+        w.wxname wxname,
+        w.comments comments,
+        v.id vpsId,
+        v.vpsname vpsname,
+        ws.id websiteId,
+        ws.websitename websitename,
+        date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM pacuser w
+        LEFT JOIN vps v ON w.vps_id = v.id AND v.delete_status = '1'
+        LEFT JOIN user_website uw ON w.id = uw.pacuser_id AND uw.delete_status = '1'
+        LEFT JOIN website ws ON uw.website_id = ws.id AND ws.delete_status = '1'
+        WHERE w.userphone=#{searchValue}
+    </select>
 </mapper>

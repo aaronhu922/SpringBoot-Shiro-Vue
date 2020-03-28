@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-form>
         <el-form-item>
-          <el-button type="primary" icon="plus" @click="showCreate" v-if="hasPerm('article:add')">添加
+          <el-button type="primary" icon="plus" @click="showCreate" v-if="hasPerm('vps:add')">添加
           </el-button>
         </el-form-item>
       </el-form>
@@ -22,7 +22,7 @@
           <span>{{scope.row.createTime}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="管理" width="200" >
+      <el-table-column align="center" label="管理" width="200" v-if="hasPerm('vps:update')">
         <template slot-scope="scope">
           <el-button type="primary" icon="edit" @click="showUpdate(scope.$index)">修改</el-button>
         </template>
@@ -88,9 +88,9 @@
     methods: {
       getList() {
         //查询列表
-        // if (!this.hasPerm('vps:list')) {
-        //   return
-        // }
+        if (!this.hasPerm('vps:list')) {
+          return
+        }
         this.listLoading = true;
         this.api({
           url: "/vps/listVps",

@@ -22,4 +22,8 @@ public interface WebsiteDao {
      *
      */
     int updateWebsite(JSONObject jsonObject);
+
+    String getProxyaddr(int id);
+
+    List<Integer> listWebsitesIds();
 }

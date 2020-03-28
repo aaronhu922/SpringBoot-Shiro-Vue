@@ -53,21 +53,21 @@ export const asyncRouterMap = [
         path: '',
         name: '加速器用户',
         component: _import('pacuser/pacuser'),
-        meta: {title: '加速器用户', icon: 'example'},
+        meta: {title: '加速器用户', icon: 'clients'},
         menu: 'pacuser'
       },
       {
         path: 'vps',
         name: '服务器',
         component: _import('pacuser/vps'),
-        meta: {title: '服务器', icon: 'example'},
+        meta: {title: '服务器', icon: 'server'},
         menu: 'vps'
       },
       {
         path: 'website',
         name: '加速网站',
         component: _import('pacuser/website'),
-        meta: {title: '加速网站', icon: 'example'},
+        meta: {title: '加速网站', icon: 'website'},
         menu: 'website'
       },
     ]

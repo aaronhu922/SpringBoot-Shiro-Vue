@@ -14,6 +14,13 @@
     WHERE w.delete_status = '1'
   </select>
 
+
+  <select id="getVpsIpport" parameterType="Integer" resultType="String">
+    SELECT vpsipport
+    FROM vps
+    WHERE id = #{id}
+  </select>
+
   <select id="listVps" resultType="com.alibaba.fastjson.JSONObject">
     SELECT
     w.id                                      id,

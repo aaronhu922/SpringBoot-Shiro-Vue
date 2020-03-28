@@ -3,6 +3,7 @@ package com.heeexy.example.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.heeexy.example.service.WebsiteService;
 import com.heeexy.example.util.CommonUtil;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,7 @@ public class WebsiteController {
 	/**
 	 * 查询文章列表
 	 */
-//	@RequiresPermissions("website:list")
+	@RequiresPermissions("website:list")
 	@GetMapping("/listWebsite")
 	public JSONObject listWebsite(HttpServletRequest request) {
 		return websiteService.listWebsite(CommonUtil.request2Json(request));
@@ -30,7 +31,7 @@ public class WebsiteController {
 	/**
 	 * 新增文章
 	 */
-//	@RequiresPermissions("website:add")
+	@RequiresPermissions("website:add")
 	@PostMapping("/addWebsite")
 	public JSONObject addWebsite(@RequestBody JSONObject requestJson) {
 		CommonUtil.hasAllRequired(requestJson, "websitename,proxyaddr");
@@ -40,7 +41,7 @@ public class WebsiteController {
 	/**
 	 * 修改文章
 	 */
-//	@RequiresPermissions("website:update")
+	@RequiresPermissions("website:update")
 	@PostMapping("/updateWebsite")
 	public JSONObject updateWebsite(@RequestBody JSONObject requestJson) {
 		CommonUtil.hasAllRequired(requestJson, "id,websitename,proxyaddr");

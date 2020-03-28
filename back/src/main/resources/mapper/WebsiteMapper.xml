@@ -14,6 +14,11 @@
     WHERE w.delete_status = '1'
   </select>
 
+  <select id="listWebsitesIds" resultType="int">
+    SELECT id
+    FROM website
+  </select>
+
   <select id="listWebsite" resultType="com.alibaba.fastjson.JSONObject">
     SELECT
     w.id                                      id,
@@ -33,4 +38,10 @@
     proxyaddr = #{proxyaddr}
     WHERE id = #{id}
   </update>
+
+  <select id="getProxyaddr" parameterType="Integer" resultType="String">
+    SELECT proxyaddr
+    FROM website
+    WHERE id = #{id}
+  </select>
 </mapper>

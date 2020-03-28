@@ -22,4 +22,6 @@ public interface VpsDao {
      *
      */
     int updateVps(JSONObject jsonObject);
+
+    String getVpsIpport(int id);
 }

@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
   mysql:
     image: mysql:8.0
@@ -10,3 +10,16 @@ services:
     volumes:
       # put SQL files to /docker-entrypoint-initdb.d, they will be executed after DB is ready
       - "./db.sql:/docker-entrypoint-initdb.d/create_databases.sql"
+  pacsystem:
+    image: pacsystem
+    environment:
+      - LOGGING_LEVEL_ROOT=debug
+      - SERVER_PACFILE_PATH=/home/aaronhu/
+      - MYSQL_HOST=mysql
+      - LOG_HOME=/var/log
+    ports:
+      - 8080:8080
+    links:
+      - mysql
+    volumes:
+      - /home/aaronhu/:/home/aaronhu/
