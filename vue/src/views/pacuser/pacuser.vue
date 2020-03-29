@@ -10,7 +10,7 @@
             v-model="listQuery.searchValue" style="width:200px;">
           </el-input>
         <el-button type="success" icon="el-icon-search" @click="searchPacuser">查找</el-button>
-        <el-button type="success" icon="plus" @click="importPacuser">导入</el-button>
+        <!--el-button type="success" icon="plus" @click="importPacuser">导入</el-button-->
         </el-form-item>
       </el-form>
     </div>

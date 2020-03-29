@@ -8,7 +8,7 @@ mybatis:
 
 pacfile:
   server:
-    url: http://47.114.176.127/
+    url: ${SERVER_PACFILE_URL:http://47.114.176.127/}
   folder:
     path: ${SERVER_PACFILE_PATH:/home/aaronhu/Documents/}
 

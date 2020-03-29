@@ -17,6 +17,7 @@ services:
       - SERVER_PACFILE_PATH=/home/aaronhu/
       - MYSQL_HOST=mysql
       - LOG_HOME=/var/log
+      - SERVER_PACFILE_URL=http://47.114.176.127/
     ports:
       - 8080:8080
     links:
