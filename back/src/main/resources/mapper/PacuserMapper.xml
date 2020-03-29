@@ -115,10 +115,9 @@
         ws.id websiteId,
         ws.websitename websitename,
         date_format(w.create_time, '%Y.%m.%d %T') createTime
-        FROM pacuser w
+        FROM (select * from pacuser w where w.userphone like CONCAT('%',#{searchValue},'%')) w
         LEFT JOIN vps v ON w.vps_id = v.id AND v.delete_status = '1'
-        LEFT JOIN user_website uw ON w.id = uw.pacuser_id AND uw.delete_status = '1'
+        INNER JOIN user_website uw ON w.id = uw.pacuser_id AND uw.delete_status = '1'
         LEFT JOIN website ws ON uw.website_id = ws.id AND ws.delete_status = '1'
-        WHERE w.userphone=#{searchValue}
     </select>
 </mapper>
