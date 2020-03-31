@@ -11,7 +11,7 @@ services:
       # put SQL files to /docker-entrypoint-initdb.d, they will be executed after DB is ready
       - "./db.sql:/docker-entrypoint-initdb.d/create_databases.sql"
   pacsystem:
-    image: pacsystem
+    image: aaronhu922/pacsystem:1.1
     environment:
       - LOGGING_LEVEL_ROOT=debug
       - SERVER_PACFILE_PATH=/home/aaronhu/

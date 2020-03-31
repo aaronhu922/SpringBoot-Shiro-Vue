@@ -36,6 +36,7 @@
         LEFT JOIN vps v ON w.vps_id = v.id AND v.delete_status = '1'
         INNER JOIN user_website uw ON w.id = uw.pacuser_id AND uw.delete_status = '1'
         LEFT JOIN website ws ON uw.website_id = ws.id AND ws.delete_status = '1'
+        ORDER BY w.id DESC
     </select>
 
     <insert id="addPacuser" parameterType="com.alibaba.fastjson.JSONObject" useGeneratedKeys="true" keyProperty="id">
@@ -119,5 +120,6 @@
         LEFT JOIN vps v ON w.vps_id = v.id AND v.delete_status = '1'
         INNER JOIN user_website uw ON w.id = uw.pacuser_id AND uw.delete_status = '1'
         LEFT JOIN website ws ON uw.website_id = ws.id AND ws.delete_status = '1'
+        ORDER BY w.id DESC
     </select>
 </mapper>
