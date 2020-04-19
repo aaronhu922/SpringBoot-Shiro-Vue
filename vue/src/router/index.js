@@ -70,6 +70,13 @@ export const asyncRouterMap = [
         meta: {title: '加速网站', icon: 'website'},
         menu: 'website'
       },
+      {
+        path: 'uploadpacusers',
+        name: '导入用户',
+        component: _import('pacuser/uploadpacusers'),
+        meta: {title: '导入用户', icon: 'upload'},
+        menu: 'uploadpacusers'
+      },
     ]
   },
   {

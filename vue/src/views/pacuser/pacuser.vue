@@ -7,10 +7,11 @@
           <el-input
             placeholder="请输入电话号码"
             prefix-icon="el-icon-search"
-            v-model="listQuery.searchValue" style="width:200px;">
-          </el-input>
-        <el-button type="success" icon="el-icon-search" @click="searchPacuser">查找</el-button>
-        <!--el-button type="success" icon="plus" @click="importPacuser">导入</el-button-->
+            v-model="listQuery.searchValue"
+            style="width:200px;"
+          ></el-input>
+          <el-button type="success" icon="el-icon-search" @click="searchPacuser">查找</el-button>
+          <!--el-button type="success" icon="plus" @click="importPacuser">导入</el-button-->
         </el-form-item>
       </el-form>
     </div>
@@ -37,7 +38,7 @@
             <div v-text="websitename" style="display: inline-block;vertical-align: middle;"></div>
           </div>
         </template>
-      </el-table-column>      
+      </el-table-column>
       <el-table-column align="center" prop="vpsname" label="代理服务器" style="width: 60px;"></el-table-column>
       <el-table-column align="center" prop="comments" label="代理地址" style="width: 60px;"></el-table-column>
       <el-table-column align="center" label="创建时间" width="170">
@@ -45,10 +46,25 @@
           <span>{{scope.row.createTime}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="管理" width="200" v-if="hasPerm('pacuser:update') ||hasPerm('pacuser:delete')">
+      <el-table-column
+        align="center"
+        label="管理"
+        width="200"
+        v-if="hasPerm('pacuser:update') ||hasPerm('pacuser:delete')"
+      >
         <template slot-scope="scope">
-          <el-button type="primary" icon="edit" @click="showUpdate(scope.$index)" v-if="hasPerm('pacuser:update')">修改</el-button>
-          <el-button type="danger" icon="delete" @click="removePacuser(scope.$index)" v-if="hasPerm('pacuser:update')">删除</el-button>
+          <el-button
+            type="primary"
+            icon="edit"
+            @click="showUpdate(scope.$index)"
+            v-if="hasPerm('pacuser:update')"
+          >修改</el-button>
+          <el-button
+            type="danger"
+            icon="delete"
+            @click="removePacuser(scope.$index)"
+            v-if="hasPerm('pacuser:update')"
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -96,8 +112,6 @@
               :label="item.vpsname"
               :value="item.id"
             ></el-option>
- 
-
           </el-select>
         </el-form-item>
         <!--el-form-item label="备注">
@@ -141,19 +155,19 @@ export default {
         deleteStatus: "1"
       },
       vpslist: [],
-      websiteslist: [],
+      websiteslist: []
     };
   },
   created() {
     this.getList();
     this.getWebsiteList();
     this.getVpsList();
-  },  
+  },
   methods: {
     getList() {
       //查询列表
-      if (!this.hasPerm('pacuser:list')) {
-        return
+      if (!this.hasPerm("pacuser:list")) {
+        return;
       }
       this.listLoading = true;
       this.api({
@@ -164,24 +178,24 @@ export default {
         this.listLoading = false;
         this.list = data.list;
         this.totalCount = data.totalCount;
-      })
+      });
     },
     getWebsiteList() {
       this.api({
-          url: "/website/listWebsite",
-          method: "get",         
-        }).then(data => {
-          this.websiteslist = data.list;
-        })
+        url: "/website/listWebsite",
+        method: "get"
+      }).then(data => {
+        this.websiteslist = data.list;
+      });
     },
-    getVpsList() {        
-        this.api({
-          url: "/vps/listVps",
-          method: "get",
-        }).then(data => {
-          this.vpslist = data.list;
-        })
-      },
+    getVpsList() {
+      this.api({
+        url: "/vps/listVps",
+        method: "get"
+      }).then(data => {
+        this.vpslist = data.list;
+      });
+    },
     handleSizeChange(val) {
       //改变每页数量
       this.listQuery.pageRow = val;
@@ -222,8 +236,8 @@ export default {
         data: this.tempPacuser
       }).then(() => {
         this.getList();
-        this.dialogFormVisible = false
-      })
+        this.dialogFormVisible = false;
+      });
     },
     updatePacuser() {
       // alert("test");
@@ -234,53 +248,56 @@ export default {
         data: this.tempPacuser
       }).then(() => {
         this.getList();
-        this.dialogFormVisible = false
-      })
+        this.dialogFormVisible = false;
+      });
     },
     removePacuser($index) {
-        let _vue = this;
-        this.$confirm('确定删除此客户?', '提示', {
-          confirmButtonText: '确定',
-          showCancelButton: false,
-          type: 'warning'
-        }).then(() => {
-          let pacuser = _vue.list[$index];          
-          _vue.api({
+      let _vue = this;
+      this.$confirm("确定删除此客户?", "提示", {
+        confirmButtonText: "确定",
+        showCancelButton: false,
+        type: "warning"
+      }).then(() => {
+        let pacuser = _vue.list[$index];
+        _vue
+          .api({
             url: "/pacuser/removePacuser",
             method: "post",
             data: pacuser
-          }).then(() => {
-            _vue.getList()
-          }).catch(() => {
-            _vue.$message.error("删除失败")
           })
-        })
-      },
+          .then(() => {
+            _vue.getList();
+          })
+          .catch(() => {
+            _vue.$message.error("删除失败");
+          });
+      });
+    },
     searchPacuser() {
       if (this.listQuery.searchValue) {
         this.api({
-        url: "/pacuser/searchPacuser",
-        method: "get",
-        params: this.listQuery
-      }).then(data => {
-        this.listLoading = false;
-        this.list = data.list;
-        this.totalCount = data.totalCount;
-      })
+          url: "/pacuser/searchPacuser",
+          method: "get",
+          params: this.listQuery
+        }).then(data => {
+          this.listLoading = false;
+          this.list = data.list;
+          this.totalCount = data.totalCount;
+        });
       } else {
         this.getList();
-        this.dialogFormVisible = false
-      }       
-    }, 
+        this.dialogFormVisible = false;
+      }
+    },
     importPacuser() {
       //保存
       this.api({
         url: "/pacuser/importPacuser",
-        method: "get",
+        method: "get"
       }).then(() => {
         this.getList();
-      })
-    },   
+      });
+    }
   }
 };
 </script>
