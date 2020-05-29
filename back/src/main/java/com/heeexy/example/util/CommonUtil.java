@@ -174,6 +174,6 @@ public class CommonUtil {
 	 * 没有传pageRow参数时,默认每页10条.
 	 */
 	public static void fillPageParam(final JSONObject paramObject) {
-		fillPageParam(paramObject, 10);
+		fillPageParam(paramObject, 50);
 	}
 }

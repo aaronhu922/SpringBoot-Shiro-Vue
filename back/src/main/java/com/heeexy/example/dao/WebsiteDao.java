@@ -26,4 +26,6 @@ public interface WebsiteDao {
     String getProxyaddr(int id);
 
     List<Integer> listWebsitesIds();
+
+    List<JSONObject> listAllWebsite();
 }

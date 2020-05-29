@@ -2,11 +2,14 @@ package com.heeexy.example.service.impl;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.heeexy.example.dao.VpsDao;
+import com.heeexy.example.dao.WebsiteDao;
 import com.heeexy.example.util.CommonUtil;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,7 +19,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -24,51 +29,71 @@ public class ExcelImportService {
 
     private static Logger logger = LoggerFactory.getLogger(ExcelImportService.class);
 
+
+    @Autowired
+    private WebsiteDao websiteDao;
+    @Autowired
+    private VpsDao vpsDao;
+
     public List<JSONObject> parseExcel(MultipartFile file) {
+        Map<String, Integer> cachedKVMap = new HashMap();
+        List<JSONObject> listAllWebsite = websiteDao.listAllWebsite();
+        for (JSONObject website : listAllWebsite) {
+            cachedKVMap.put(website.getString("websitename"), website.getIntValue("id"));
+            logger.info("website name: {}, id: {}.", website.getString("websitename"), website.getIntValue("id"));
+        }
+        JSONObject vpsListInfo = new JSONObject();
+        vpsListInfo.put("offSet", 0);
+        vpsListInfo.put("pageRow", 100);
+        List<JSONObject> vpsList = vpsDao.listVps(vpsListInfo);
+        for (JSONObject vps : vpsList) {
+            cachedKVMap.put(vps.getString("vpsname"), vps.getIntValue("id"));
+            logger.info("vps name: {}, id: {}.", vps.getString("vpsname"), vps.getIntValue("id"));
+        }
+
+//        tempPacuser: {
+//        id: "",
+//        username: "",
+//        userphone: "",
+//        wxname: "",
+//        websites: [],
+//        vpsId: "",
+//        comments: "",
+//        deleteStatus: "1"
+//      },
 
         try (Workbook wb = WorkbookFactory.create(file.getInputStream())) {
             Sheet sheet = wb.getSheetAt(0);
-
+            int rowNum = sheet.getPhysicalNumberOfRows();
+            logger.info("This excel has {} rows total.", rowNum);
             DataFormatter formatter = new DataFormatter();
-            for (Row row : sheet) {
-                for (Cell cell : row) {
-                    CellReference cellRef = new CellReference(row.getRowNum(), cell.getColumnIndex());
-                    //单元格名称
-                    System.out.print(cellRef.formatAsString());
-                    System.out.print(" - ");
+            for (int i =1; i<rowNum; i++) {
+                Row row = sheet.getRow(i);
 
-                    //通过获取单元格值并应用任何数据格式（Date，0.00，1.23e9，$ 1.23等），获取单元格中显示的文本
-                    String text = formatter.formatCellValue(cell);
-                    System.out.println(text);
-
-                    //获取值并自己格式化
-                    switch (cell.getCellType()) {
-                        case STRING:// 字符串型
-                            System.out.println(cell.getRichStringCellValue().getString());
-                            break;
-                        case NUMERIC:// 数值型
-                            if (DateUtil.isCellDateFormatted(cell)) { // 如果是date类型则 ，获取该cell的date值
-                                System.out.println(cell.getDateCellValue());
-                            } else {// 纯数字
-                                System.out.println(cell.getNumericCellValue());
-                            }
-                            break;
-                        case BOOLEAN:// 布尔
-                            System.out.println(cell.getBooleanCellValue());
-                            break;
-                        case FORMULA:// 公式型
-                            System.out.println(cell.getCellFormula());
-                            break;
-                        case BLANK:// 空值
-                            System.out.println();
-                            break;
-                        case ERROR: // 故障
-                            System.out.println();
-                            break;
-                        default:
-                            System.out.println();
-                    }
+                String name = formatter.formatCellValue(row.getCell(0));
+                if(name=="") break;
+                String phone = formatter.formatCellValue(row.getCell(1));
+                if(phone=="") break;
+                String websiteList = formatter.formatCellValue(row.getCell(2));
+                if(websiteList=="") break;
+                String[] websiteNames = websiteList.split(",");
+                int[] websiteIds = new int[websiteNames.length];
+                int l=0;
+                for (String wsname: websiteNames) {
+                    logger.info("website: {}", wsname);
+                    websiteIds[l++] = cachedKVMap.get(wsname);
                 }
+                String vps = formatter.formatCellValue(row.getCell(3));
+                if(vps=="") break;
+
+                String comment = formatter.formatCellValue(row.getCell(4));
+                JSONObject tempPacuser = new JSONObject();
+                tempPacuser.put("username", name);
+                tempPacuser.put("userphone", phone);
+                tempPacuser.put("websites", websiteIds);
+                tempPacuser.put("vpsId", cachedKVMap.get(vps));
+                tempPacuser.put("wxname", comment);
+                logger.info("Imported pacuser: {}", tempPacuser);
             }
 
         } catch (FileNotFoundException e) {
