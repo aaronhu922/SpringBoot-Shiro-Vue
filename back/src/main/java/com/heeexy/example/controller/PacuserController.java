@@ -72,18 +72,19 @@ public class PacuserController {
 
     @PostMapping(path = "/uploadPacusers", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public JSONObject uploadPacFile(@RequestPart("uploadFile") MultipartFile inputFile) {
+        JSONObject resultJson = new JSONObject();
         try {
             if (inputFile == null) {
                 logger.error("Missing parameters while uploading.");
-                return null;
+                resultJson.put("失败","文件不能为空！");
+                return resultJson;
             }
-            excelImportService.parseExcel(inputFile);
-           return excelImportService.storeFile(inputFile, "test.xlsx");
-
+            return CommonUtil.successJson(excelImportService.parseExcel(inputFile));
         } catch (Exception e) {
-            e.printStackTrace();
+            resultJson.put("失败","上传文件失败！");
+            logger.error("Upload file failed: {}", e);
         }
-        return null;
+        return resultJson;
     }
 
 

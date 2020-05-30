@@ -10,7 +10,7 @@ pacfile:
   server:
     url: ${SERVER_PACFILE_URL:http://47.114.176.127/}
   folder:
-    path: ${SERVER_PACFILE_PATH:/home/aaronhu/Documents/}
+    path: ${SERVER_PACFILE_PATH:/home/aahu/Documents/}
 
 logging:
   level:

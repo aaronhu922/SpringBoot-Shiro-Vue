@@ -4,7 +4,9 @@ package com.heeexy.example.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.heeexy.example.dao.VpsDao;
 import com.heeexy.example.dao.WebsiteDao;
+import com.heeexy.example.service.PacuserService;
 import com.heeexy.example.util.CommonUtil;
+import com.heeexy.example.util.constants.Constants;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
 import org.slf4j.Logger;
@@ -19,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,8 +37,12 @@ public class ExcelImportService {
     private WebsiteDao websiteDao;
     @Autowired
     private VpsDao vpsDao;
+    @Autowired
+    private PacuserService pacuserService;
 
-    public List<JSONObject> parseExcel(MultipartFile file) {
+    public JSONObject parseExcel(MultipartFile file) {
+        JSONObject importExcelResult = new JSONObject();
+
         Map<String, Integer> cachedKVMap = new HashMap();
         List<JSONObject> listAllWebsite = websiteDao.listAllWebsite();
         for (JSONObject website : listAllWebsite) {
@@ -51,40 +58,29 @@ public class ExcelImportService {
             logger.info("vps name: {}, id: {}.", vps.getString("vpsname"), vps.getIntValue("id"));
         }
 
-//        tempPacuser: {
-//        id: "",
-//        username: "",
-//        userphone: "",
-//        wxname: "",
-//        websites: [],
-//        vpsId: "",
-//        comments: "",
-//        deleteStatus: "1"
-//      },
 
         try (Workbook wb = WorkbookFactory.create(file.getInputStream())) {
             Sheet sheet = wb.getSheetAt(0);
             int rowNum = sheet.getPhysicalNumberOfRows();
             logger.info("This excel has {} rows total.", rowNum);
             DataFormatter formatter = new DataFormatter();
-            for (int i =1; i<rowNum; i++) {
+            for (int i = 1; i < rowNum; i++) {
                 Row row = sheet.getRow(i);
 
                 String name = formatter.formatCellValue(row.getCell(0));
-                if(name=="") break;
+                if (name == "") break;
                 String phone = formatter.formatCellValue(row.getCell(1));
-                if(phone=="") break;
+                if (phone == "") break;
                 String websiteList = formatter.formatCellValue(row.getCell(2));
-                if(websiteList=="") break;
+                if (websiteList == "") break;
                 String[] websiteNames = websiteList.split(",");
-                int[] websiteIds = new int[websiteNames.length];
-                int l=0;
-                for (String wsname: websiteNames) {
+                List<Integer> websiteIds = new ArrayList<>();
+                for (String wsname : websiteNames) {
                     logger.info("website: {}", wsname);
-                    websiteIds[l++] = cachedKVMap.get(wsname);
+                    websiteIds.add(cachedKVMap.get(wsname));
                 }
                 String vps = formatter.formatCellValue(row.getCell(3));
-                if(vps=="") break;
+                if (vps == "") break;
 
                 String comment = formatter.formatCellValue(row.getCell(4));
                 JSONObject tempPacuser = new JSONObject();
@@ -93,16 +89,24 @@ public class ExcelImportService {
                 tempPacuser.put("websites", websiteIds);
                 tempPacuser.put("vpsId", cachedKVMap.get(vps));
                 tempPacuser.put("wxname", comment);
+                JSONObject result = pacuserService.addPacuser(tempPacuser);
                 logger.info("Imported pacuser: {}", tempPacuser);
+                if (result.getString("code").equals(Constants.SUCCESS_CODE)) {
+                    importExcelResult.put("Line " + (i + 1) + " " + phone, "导入成功！");
+                } else {
+                    importExcelResult.put("Line " + (i + 1) + " " + phone, "导入失败！" + result.getString("msg"));
+                }
             }
 
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            importExcelResult.put("失败","文件不存在！");
+            logger.error("Parse excel failed: {}", e);
         } catch (IOException e) {
-            e.printStackTrace();
+            importExcelResult.put("失败","文件格式错误！请上传excel格式文件！");
+            logger.error("Parse excel failed: {}", e);
         }
 
-        return null;
+        return importExcelResult;
     }
 
     public JSONObject storeFile(MultipartFile file, String newFileName) {
